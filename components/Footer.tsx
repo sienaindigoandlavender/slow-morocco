@@ -40,6 +40,7 @@ interface FooterData {
     brandName: string;
   };
   columns: FooterColumn[];
+  contentSites: { label: string; url: string }[];
   legal: FooterLink[];
   copyright: {
     year: number;
@@ -120,6 +121,7 @@ export default function Footer() {
   };
 
   const columns = footerData?.columns || [];
+  const contentSites = footerData?.contentSites || [];
   const legal = footerData?.legal || [
     { label: "Terms", href: "/terms" },
     { label: "Privacy", href: "/privacy" },
@@ -271,7 +273,35 @@ export default function Footer() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          LEVEL 3: Slow World Network
+          LEVEL 3: Content Network (from Nexus)
+          ═══════════════════════════════════════════════════════════════ */}
+      {contentSites.length > 0 && (
+        <section className="py-8 bg-[#141414]">
+          <div className="container mx-auto px-8 md:px-16 lg:px-20">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4 md:gap-8">
+              <span className="text-[10px] tracking-[0.2em] uppercase text-white/20">
+                Explore
+              </span>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                {contentSites.map((site, idx) => (
+                  <a
+                    key={idx}
+                    href={site.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs tracking-[0.1em] text-white/40 hover:text-white/70 transition-colors"
+                  >
+                    {site.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+          LEVEL 4: Slow World Network
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-8 bg-[#121212]">
         <div className="container mx-auto px-8 md:px-16 lg:px-20">
@@ -318,7 +348,7 @@ export default function Footer() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════
-          LEVEL 4: Legal & Copyright (from Nexus)
+          LEVEL 5: Legal & Copyright (from Nexus)
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-6 bg-[#0e0e0e]">
         <div className="container mx-auto px-8 md:px-16 lg:px-20">
