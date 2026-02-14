@@ -903,7 +903,7 @@ Slow Morocco Team`);
                 <button
                   onClick={() => {
                     // Send approval email to admin
-                    const mailtoLink = `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || ""}?subject=Itinerary Approved: ${proposal?.journeyTitle}&body=Client ${proposal?.clientName} has approved the itinerary.%0D%0A%0D%0AProposal: ${window.location.href}%0D%0A%0D%0APlease review and send the final confirmation with payment link.`;
+                    const mailtoLink = `mailto:hello@slowmorocco.com?subject=Itinerary Approved: ${proposal?.journeyTitle}&body=Client ${proposal?.clientName} has approved the itinerary.%0D%0A%0D%0AProposal: ${window.location.href}%0D%0A%0D%0APlease review and send the final confirmation with payment link.`;
                     window.open(mailtoLink);
                     setApprovalSubmitted(true);
                   }}
@@ -968,7 +968,7 @@ Slow Morocco Team`);
                     localStorage.setItem(`feedback-${proposalId}`, JSON.stringify(feedbackData));
                     
                     // Send email notification to admin
-                    const mailtoLink = `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || ""}?subject=Revision Request: ${proposal?.journeyTitle}&body=Client ${proposal?.clientName} has requested changes:%0D%0A%0D%0A${encodeURIComponent(clientFeedback)}%0D%0A%0D%0AProposal: ${window.location.href}%0D%0A%0D%0AEdit the quote here:%0D%0A${window.location.origin}/admin/quotes/new?feedback=${encodeURIComponent(clientFeedback)}`;
+                    const mailtoLink = `mailto:hello@slowmorocco.com?subject=Revision Request: ${proposal?.journeyTitle}&body=Client ${proposal?.clientName} has requested changes:%0D%0A%0D%0A${encodeURIComponent(clientFeedback)}%0D%0A%0D%0AProposal: ${window.location.href}%0D%0A%0D%0AEdit the quote here:%0D%0A${window.location.origin}/admin/quotes/new?feedback=${encodeURIComponent(clientFeedback)}`;
                     window.open(mailtoLink);
                     setFeedbackSubmitted(true);
                   }}
