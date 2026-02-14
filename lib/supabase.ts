@@ -5,6 +5,18 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Admin client — bypasses RLS, use only in server-side API routes
+// for transactions: bookings, quotes, proposals, etc.
+let _supabaseAdmin: ReturnType<typeof createClient> | null = null;
+export function getSupabaseAdmin() {
+  if (!_supabaseAdmin) {
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) throw new Error("SUPABASE_SERVICE_ROLE_KEY not set");
+    _supabaseAdmin = createClient(supabaseUrl, serviceKey);
+  }
+  return _supabaseAdmin;
+}
+
 // =============================================
 // HELPERS
 // =============================================

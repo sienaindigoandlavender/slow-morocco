@@ -194,7 +194,7 @@ export default function Chatbot() {
               </button>
             </div>
             <p className="text-[10px] text-[#6b6b6b] mt-2 text-center">
-              Or email us at hello@slowmorocco.com
+              Or email us at {process.env.NEXT_PUBLIC_CONTACT_EMAIL || ""}
             </p>
           </div>
         </div>
