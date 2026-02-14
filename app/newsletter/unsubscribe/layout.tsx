@@ -1,0 +1,17 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Unsubscribe | Slow Morocco",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
+export default function UnsubscribeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children;
+}
