@@ -1,10 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Nexus Supabase — shared across all brands
-const nexusUrl = process.env.NEXUS_SUPABASE_URL!;
-const nexusKey = process.env.NEXUS_SUPABASE_ANON_KEY!;
+const nexusUrl = process.env.NEXUS_SUPABASE_URL || "";
+const nexusKey = process.env.NEXUS_SUPABASE_ANON_KEY || "";
 
-const nexus = createClient(nexusUrl, nexusKey);
+const nexus = nexusUrl
+  ? createClient(nexusUrl, nexusKey)
+  : (null as unknown as ReturnType<typeof createClient>);
 
 const SITE_ID = process.env.SITE_ID || "slow-morocco";
 
