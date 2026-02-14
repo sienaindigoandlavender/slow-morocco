@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSettingsMap, getFooterLinks, convertDriveUrl } from "@/lib/supabase";
+import { getNexusContentSites } from "@/lib/nexus";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -42,6 +43,9 @@ export async function GET() {
 
     // Get footer links from Supabase
     const footerLinks = await getFooterLinks();
+
+    // Get content sites from Nexus
+    const contentSites = await getNexusContentSites();
 
     // Known slugs for auto-linking
     const autoLinks: { [key: string]: string } = {
@@ -185,6 +189,10 @@ export async function GET() {
       brandId: SITE_ID,
       newsletter: newsletterConfig,
       columns: finalColumns,
+      contentSites: contentSites.map((s) => ({
+        label: s.site_label,
+        url: s.site_url,
+      })),
       legal,
       copyright: {
         year: new Date().getFullYear(),
@@ -210,6 +218,7 @@ export async function GET() {
           { number: 3, title: "Journeys", links: [{ order: 1, label: "All Journeys", href: "/journeys", type: "link" }] },
           { number: 4, title: "About Morocco", links: [{ order: 1, label: "All Stories", href: "/stories", type: "link" }] },
         ],
+        contentSites: [],
         legal: [
           { label: "Privacy Policy", href: "/privacy" },
           { label: "Terms of Service", href: "/terms" },
