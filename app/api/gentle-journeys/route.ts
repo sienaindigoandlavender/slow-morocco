@@ -54,7 +54,7 @@ export async function GET() {
         founderNoteBody: settings.founder_note_body || "",
         whatsappUrl,
         whatsappNumber: settings.whatsapp_number || "+212618070450",
-        contactEmail: settings.contact_email || process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
+        contactEmail: settings.contact_email || "hello@slowmorocco.com",
         requirements: [
           { title: "Travel insurance", description: settings.requirement_insurance || "" },
           { title: "Doctor's clearance", description: settings.requirement_doctor || "" },

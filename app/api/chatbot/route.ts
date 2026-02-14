@@ -50,12 +50,12 @@ function findBestMatch(query: string, training: ChatbotTraining[]): ChatbotTrain
 function getDefaultTraining(): ChatbotTraining[] {
   return [
     { id: 0, category: "greeting", question: "Hello", answer: "Hello. Ask me anything about Morocco or our journeys.", keywords: "hello,hi,hey,bonjour,salaam", sort_order: 1 },
-    { id: 0, category: "fallback", question: "I don't understand", answer: "I don't have an answer for that. Email us at " + (process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com") + " or use the Plan Your Trip form.", keywords: "", sort_order: 999 },
+    { id: 0, category: "fallback", question: "I don't understand", answer: "I don't have an answer for that. Email us at hello@slowmorocco.com or use the Plan Your Trip form.", keywords: "", sort_order: 999 },
     { id: 0, category: "journeys", question: "What journeys do you offer?", answer: "Private journeys from 3 to 14 days. Sahara, Imperial Cities, coast, mountains - depends what you're after. Everything's customizable.", keywords: "journey,journeys,tour,tours,itinerary,trip,trips,routes,options", sort_order: 10 },
     { id: 0, category: "prices", question: "How much do your journeys cost?", answer: "Depends on duration and accommodation level. Roughly: 3 days from €1,200, 12 days around €4,500 - for two guests. Includes transport, accommodation, guides, most meals. Use Plan Your Trip for a real quote.", keywords: "price,cost,how much,expensive,budget,euro,money,rate", sort_order: 11 },
     { id: 0, category: "included", question: "What's included?", answer: "Private 4x4 with driver. Handpicked riads and camps. Local guides. Breakfasts, most dinners. Not included: flights, insurance, personal expenses.", keywords: "include,included,what's in,cover,meals,hotel,transport,guide", sort_order: 12 },
     { id: 0, category: "booking", question: "How do I book?", answer: "Fill out the Plan Your Trip form. We send a proposal within 48 hours. 30% deposit holds your dates, balance due 60 days before.", keywords: "book,booking,reserve,reservation,how to,start,begin,deposit,payment", sort_order: 13 },
-    { id: 0, category: "contact", question: "How can I contact you?", answer: "Plan Your Trip form or " + (process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com") + ". WhatsApp: +212 6 18 07 04 50.", keywords: "contact,email,phone,whatsapp,reach,talk,call", sort_order: 18 },
+    { id: 0, category: "contact", question: "How can I contact you?", answer: "Plan Your Trip form or hello@slowmorocco.com. WhatsApp: +212 6 18 07 04 50.", keywords: "contact,email,phone,whatsapp,reach,talk,call", sort_order: 18 },
   ];
 }
 
@@ -102,13 +102,13 @@ export async function POST(request: Request) {
     const fallbackItem = training.find((t) => t.category?.toLowerCase() === "fallback");
     const fallbackResponse =
       fallbackItem?.answer ||
-      "I'd love to help you plan your Morocco journey. For specific questions about itineraries, pricing, or bookings, please reach out to us at " + (process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com") + " or use our Plan Your Trip form. What else would you like to know about traveling with us?";
+      "I'd love to help you plan your Morocco journey. For specific questions about itineraries, pricing, or bookings, please reach out to us at hello@slowmorocco.com or use our Plan Your Trip form. What else would you like to know about traveling with us?";
 
     return NextResponse.json({ response: fallbackResponse, category: "fallback" });
   } catch (error) {
     console.error("Chatbot error:", error);
     return NextResponse.json(
-      { response: "I apologize, but I'm having trouble right now. Please try again or email us at " + (process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com") + "", error: true },
+      { response: "I apologize, but I'm having trouble right now. Please try again or email us at hello@slowmorocco.com", error: true },
       { status: 500 }
     );
   }
