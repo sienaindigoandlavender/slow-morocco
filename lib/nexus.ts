@@ -1,25 +1,10 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 // Nexus Supabase — shared across all brands
-const nexusUrl = process.env.NEXUS_SUPABASE_URL || "";
-const nexusKey = process.env.NEXUS_SUPABASE_ANON_KEY || "";
+const nexusUrl = process.env.NEXUS_SUPABASE_URL!;
+const nexusKey = process.env.NEXUS_SUPABASE_ANON_KEY!;
 
-let _nexus: SupabaseClient | null = null;
-function getNexusClient(): SupabaseClient {
-  if (!_nexus) {
-    const url = process.env.NEXUS_SUPABASE_URL || nexusUrl;
-    const key = process.env.NEXUS_SUPABASE_ANON_KEY || nexusKey;
-    if (!url) throw new Error("NEXUS_SUPABASE_URL not set");
-    _nexus = createClient(url, key);
-  }
-  return _nexus;
-}
-
-const nexus = new Proxy({} as SupabaseClient, {
-  get(_, prop) {
-    return (getNexusClient() as any)[prop];
-  },
-});
+const nexus = createClient(nexusUrl, nexusKey);
 
 const SITE_ID = process.env.SITE_ID || "slow-morocco";
 

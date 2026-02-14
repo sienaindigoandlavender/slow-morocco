@@ -1,35 +1,17 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-// Lazy-init: safe at build time, works at runtime
-let _supabase: SupabaseClient | null = null;
-function getClient(): SupabaseClient {
-  if (!_supabase) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || supabaseUrl;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || supabaseAnonKey;
-    if (!url) throw new Error("NEXT_PUBLIC_SUPABASE_URL not set");
-    _supabase = createClient(url, key);
-  }
-  return _supabase;
-}
-
-// Backwards-compatible export
-export const supabase = new Proxy({} as SupabaseClient, {
-  get(_, prop) {
-    return (getClient() as any)[prop];
-  },
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Admin client — bypasses RLS, use only in server-side API routes
-let _supabaseAdmin: SupabaseClient | null = null;
+let _supabaseAdmin: ReturnType<typeof createClient> | null = null;
 export function getSupabaseAdmin() {
   if (!_supabaseAdmin) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!serviceKey) throw new Error("SUPABASE_SERVICE_ROLE_KEY not set");
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || supabaseUrl;
-    _supabaseAdmin = createClient(url, serviceKey);
+    _supabaseAdmin = createClient(supabaseUrl, serviceKey);
   }
   return _supabaseAdmin;
 }
