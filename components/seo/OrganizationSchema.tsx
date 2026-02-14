@@ -35,7 +35,7 @@ export default function OrganizationSchema() {
       name: "Morocco",
       identifier: "MA",
     },
-    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com",
+    email: "hello@slowmorocco.com",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Marrakech",
@@ -45,7 +45,7 @@ export default function OrganizationSchema() {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com",
+      email: "hello@slowmorocco.com",
       availableLanguage: ["English", "French", "Arabic", "Tamazight"],
     },
     // Connected entities - establishing Slow Morocco as part of a knowledge network

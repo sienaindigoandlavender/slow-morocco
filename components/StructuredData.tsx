@@ -5,7 +5,7 @@ export default function StructuredData() {
     name: "Slow Morocco",
     description: "Thoughtful private journeys across Morocco — designed for travellers who prefer depth over speed.",
     url: "https://www.slowmorocco.com",
-    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com",
+    email: "hello@slowmorocco.com",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Marrakech",

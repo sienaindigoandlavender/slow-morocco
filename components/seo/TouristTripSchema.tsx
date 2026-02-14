@@ -37,7 +37,7 @@ export default function TouristTripSchema({ journey }: TouristTripSchemaProps) {
       "@type": "TravelAgency",
       name: "Slow Morocco",
       url: "https://www.slowmorocco.com",
-      email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "hello@slowmorocco.com",
+      email: "hello@slowmorocco.com",
     },
     ...(price && {
       offers: {
