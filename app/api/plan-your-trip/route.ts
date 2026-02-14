@@ -86,7 +86,7 @@ export async function POST(request: Request) {
 
         // Client acknowledgment
         await resend.emails.send({
-          from: "Slow Morocco <hello@slowmorocco.com>",
+          from: process.env.RESEND_FROM_EMAIL || "Slow Morocco <hello@slowmorocco.com>",
           to: email,
           subject: `We've received your journey request`,
           html: `
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
 
         // Admin notification
         await resend.emails.send({
-          from: "Slow Morocco <noreply@slowmorocco.com>",
+          from: process.env.RESEND_FROM_EMAIL || "Slow Morocco <noreply@slowmorocco.com>",
           to: process.env.CONTACT_EMAIL,
           subject: `New Journey Request: ${firstName} ${lastName} (${clientId})`,
           html: `

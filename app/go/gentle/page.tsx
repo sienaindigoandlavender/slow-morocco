@@ -94,7 +94,7 @@ const fallbackSettings = {
   founderNoteBody: "I've run tours in Morocco for fifteen years. I've watched travellers be told \"yes, we can accommodate you\" — then be treated as an afterthought. Squeezed into standard itineraries. Made to feel like a problem to be solved.\n\nThat's not accommodation. That's tolerance.\n\nSo I built something different. These journeys were designed from scratch for travellers who need a different pace. You're the primary guest here, not the exception.",
   whatsappUrl: "https://wa.me/212618070450?text=Hello%2C%20I%27d%20like%20to%20talk%20about%20travelling%20to%20Morocco",
   whatsappNumber: "+212 6 18 07 04 50",
-  contactEmail: "hello@slowmorocco.com",
+  contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
   requirements: [
     { title: "Travel insurance", description: "Travel insurance that covers medical evacuation. Non-negotiable." },
     { title: "Doctor's clearance", description: "A doctor's note confirming you're fit for this type of travel. We provide the form." },
@@ -161,7 +161,7 @@ export default async function GentleLandingPage() {
         founderNoteBody: settingsData.founder_note_body || fallbackSettings.founderNoteBody,
         whatsappUrl: `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`,
         whatsappNumber: settingsData.whatsapp_number || "+212 6 18 07 04 50",
-        contactEmail: settingsData.contact_email || "hello@slowmorocco.com",
+        contactEmail: settingsData.contact_email || process.env.NEXT_PUBLIC_CONTACT_EMAIL || "",
         requirements: [
           { title: "Travel insurance", description: settingsData.requirement_insurance || "" },
           { title: "Doctor's clearance", description: settingsData.requirement_doctor || "" },
