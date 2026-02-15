@@ -274,6 +274,9 @@ const nextConfig = {
       { source: '/traveling-with-a-companion', destination: '/plan-your-trip', permanent: true },
       { source: '/what-we-do', destination: '/journeys', permanent: true },
       { source: '/who-we-are', destination: '/about', permanent: true },
+      // Edge cases: trailing slashes, spaces, ampersands
+      { source: '/stories/', destination: '/stories', permanent: true },
+      { source: '/journal/Blog%20Post%20Title%20One-xfxd6', destination: '/', permanent: true },
     ];
   },
 };
