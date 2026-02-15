@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Currency options
 const currencies = [
@@ -11,11 +11,17 @@ const currencies = [
   { code: "MAD", symbol: "DH" },
 ];
 
-// Language options
-const languages = [
-  { code: "en", label: "English" },
-  { code: "fr", label: "Français" },
-  { code: "es", label: "Español" },
+// Language options for Google Translate
+const TRANSLATE_LANGUAGES = [
+  { code: "en", label: "EN", name: "English" },
+  { code: "es", label: "ES", name: "Español" },
+  { code: "fr", label: "FR", name: "Français" },
+  { code: "it", label: "IT", name: "Italiano" },
+  { code: "pt", label: "PT", name: "Português" },
+  { code: "de", label: "DE", name: "Deutsch" },
+  { code: "ar", label: "AR", name: "العربية" },
+  { code: "zh", label: "ZH", name: "中文" },
+  { code: "ja", label: "JA", name: "日本語" },
 ];
 
 interface FooterLink {
@@ -55,7 +61,9 @@ export default function Footer() {
   const [footerData, setFooterData] = useState<FooterData | null>(null);
   
   // Language & Currency state
-  const [currentLang, setCurrentLang] = useState("en");
+  const [langOpen, setLangOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState("EN");
+  const langRef = useRef<HTMLDivElement>(null);
   const [currentCurrency, setCurrentCurrency] = useState("EUR");
 
   useEffect(() => {
@@ -69,17 +77,65 @@ export default function Footer() {
       .catch((err) => console.error("Footer fetch error:", err));
   }, []);
 
-  // Load saved preferences
+  // Load saved currency preference
   useEffect(() => {
-    const savedLang = localStorage.getItem("slowmorocco_lang");
     const savedCurrency = localStorage.getItem("slowmorocco_currency");
-    if (savedLang) setCurrentLang(savedLang);
     if (savedCurrency) setCurrentCurrency(savedCurrency);
   }, []);
 
-  const handleLangChange = (code: string) => {
-    setCurrentLang(code);
-    localStorage.setItem("slowmorocco_lang", code);
+  // Close lang dropdown on outside click + load Google Translate
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClick);
+
+    // Inject Google Translate script
+    if (!document.getElementById("google-translate-script")) {
+      (window as any).googleTranslateElementInit = () => {
+        new (window as any).google.translate.TranslateElement(
+          { pageLanguage: "en", autoDisplay: false },
+          "google-translate-hidden"
+        );
+      };
+      const script = document.createElement("script");
+      script.id = "google-translate-script";
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+
+  const translateTo = (langCode: string, label: string) => {
+    setCurrentLang(label);
+    setLangOpen(false);
+
+    if (langCode === "en") {
+      const frame = document.querySelector(".goog-te-banner-frame") as HTMLIFrameElement;
+      if (frame) {
+        const closeBtn = frame.contentDocument?.querySelector(".goog-close-link") as HTMLElement;
+        closeBtn?.click();
+      }
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + window.location.hostname;
+      window.location.reload();
+      return;
+    }
+
+    document.cookie = `googtrans=/en/${langCode}; path=/;`;
+    document.cookie = `googtrans=/en/${langCode}; path=/; domain=.${window.location.hostname}`;
+
+    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event("change"));
+    } else {
+      window.location.reload();
+    }
   };
 
   const handleCurrencyChange = (code: string) => {
@@ -369,18 +425,37 @@ export default function Footer() {
             {/* Right side: Language, Currency, Copyright */}
             <div className="flex items-center gap-4 md:gap-6">
               {/* Language selector */}
-              <select
-                value={currentLang}
-                onChange={(e) => handleLangChange(e.target.value)}
-                className="bg-transparent text-[10px] tracking-[0.1em] uppercase text-white/30 hover:text-white/50 focus:outline-none cursor-pointer appearance-none pr-3"
-                style={{ backgroundImage: 'none' }}
-              >
-                {languages.map((lang) => (
-                  <option key={lang.code} value={lang.code} className="bg-[#0e0e0e] text-white/50">
-                    {lang.label}
-                  </option>
-                ))}
-              </select>
+              <div ref={langRef} className="relative">
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="flex items-center gap-1.5 text-[10px] tracking-[0.1em] uppercase text-white/30 hover:text-white/50 transition-colors"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                  </svg>
+                  <span>{currentLang}</span>
+                </button>
+                {langOpen && (
+                  <div className="absolute bottom-full mb-2 right-0 bg-[#1f1f1f] border border-white/10 py-1 min-w-[120px] shadow-lg">
+                    {TRANSLATE_LANGUAGES.map((l) => (
+                      <button
+                        key={l.code}
+                        onClick={() => translateTo(l.code, l.label)}
+                        className={`block w-full text-left px-3 py-1.5 text-xs transition-colors ${
+                          currentLang === l.label ? "text-white/80" : "text-white/40 hover:text-white/70"
+                        }`}
+                      >
+                        <span className="inline-block w-6">{l.label}</span>
+                        <span className="text-white/20 ml-1">{l.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Hidden Google Translate container */}
+              <div id="google-translate-hidden" className="hidden" />
               
               {/* Currency selector */}
               <select
@@ -404,6 +479,21 @@ export default function Footer() {
           </div>
         </div>
       </section>
+
+      {/* Hide Google Translate bar and artifacts */}
+      <style jsx global>{`
+        .goog-te-banner-frame,
+        #goog-gt-tt,
+        .goog-te-balloon-frame,
+        .goog-tooltip,
+        .goog-tooltip:hover,
+        .goog-text-highlight,
+        #google-translate-hidden,
+        .skiptranslate {
+          display: none !important;
+        }
+        body { top: 0 !important; }
+      `}</style>
     </footer>
   );
 }
