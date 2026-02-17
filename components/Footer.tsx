@@ -83,6 +83,27 @@ export default function Footer() {
     if (savedCurrency) setCurrentCurrency(savedCurrency);
   }, []);
 
+  // Sync language from localStorage (source of truth) and manage googtrans cookie
+  useEffect(() => {
+    const savedLang = localStorage.getItem("slowmorocco_language");
+    if (savedLang) {
+      // User previously chose a language — respect it
+      const found = TRANSLATE_LANGUAGES.find((l) => l.code === savedLang);
+      if (found) setCurrentLang(found.label);
+    } else {
+      // No explicit preference — clear any stale googtrans cookie so site loads in English
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + window.location.hostname;
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.slowmorocco.com";
+      // If page is currently translated (stale cookie was already read by Google), reload once to clear
+      const wasTranslated = document.cookie.includes("googtrans=/en/");
+      if (wasTranslated) {
+        window.location.reload();
+        return;
+      }
+    }
+  }, []);
+
   // Close lang dropdown on outside click + load Google Translate
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -115,6 +136,7 @@ export default function Footer() {
     setLangOpen(false);
 
     if (langCode === "en") {
+      localStorage.removeItem("slowmorocco_language");
       const frame = document.querySelector(".goog-te-banner-frame") as HTMLIFrameElement;
       if (frame) {
         const closeBtn = frame.contentDocument?.querySelector(".goog-close-link") as HTMLElement;
@@ -122,12 +144,15 @@ export default function Footer() {
       }
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + window.location.hostname;
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.slowmorocco.com";
       window.location.reload();
       return;
     }
 
+    localStorage.setItem("slowmorocco_language", langCode);
     document.cookie = `googtrans=/en/${langCode}; path=/;`;
     document.cookie = `googtrans=/en/${langCode}; path=/; domain=.${window.location.hostname}`;
+    document.cookie = `googtrans=/en/${langCode}; path=/; domain=.slowmorocco.com`;
 
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement;
     if (select) {
@@ -425,7 +450,7 @@ export default function Footer() {
             {/* Right side: Language, Currency, Copyright */}
             <div className="flex items-center gap-4 md:gap-6">
               {/* Language selector */}
-              <div ref={langRef} className="relative">
+              <div ref={langRef} className="relative notranslate" translate="no">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
                   className="flex items-center gap-1.5 text-[10px] tracking-[0.1em] uppercase text-white/30 hover:text-white/50 transition-colors"
